@@ -1,18 +1,15 @@
 defmodule JobBoard do
-  @moduledoc """
-  Documentation for JobBoard.
-  """
+  def start(_type, _args) do
+    children = [
+      JobBoard.Fetcher,
+      JobBoard.Storage,
+      {Plug.Cowboy, scheme: :http, plug: JobBoard.WebRouter, options: [port: 8080]}
+    ]
 
-  @doc """
-  Hello world.
+    options = [strategy: :one_for_one, name: JobBoard.Supervisor]
 
-  ## Examples
+    Supervisor.start_link(children, options)
 
-      iex> JobBoard.hello()
-      :world
-
-  """
-  def hello do
-    :world
+    # :observer.start
   end
 end
